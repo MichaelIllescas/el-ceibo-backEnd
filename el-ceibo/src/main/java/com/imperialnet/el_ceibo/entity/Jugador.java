@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "jugadores")
 @Data
-@NoArgsConstructor
+
 @AllArgsConstructor
 public class Jugador {
 
@@ -58,5 +58,28 @@ public class Jugador {
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
-}
 
+    // Nuevo campo: Estado
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoJugador estado;
+
+    // Constructor por defecto que establece el estado inicial como ACTIVO
+    public Jugador() {
+        this.estado = EstadoJugador.ACTIVO;
+    }
+
+    // Métodos auxiliares
+    public void anular() {
+        this.estado = EstadoJugador.ANULADO;
+        this.fechaBaja = LocalDate.now(); // Registrar la fecha de baja
+    }
+    public void habilitar() {
+        this.estado = EstadoJugador.ACTIVO;
+
+    }
+
+    public boolean esActivo() {
+        return this.estado == EstadoJugador.ACTIVO;
+    }
+}
