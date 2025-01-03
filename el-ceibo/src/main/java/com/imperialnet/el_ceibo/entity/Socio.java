@@ -1,6 +1,5 @@
 package com.imperialnet.el_ceibo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -8,14 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
-@Table(name = "jugadores")
+@Table(name = "socios")
 @Data
-
+@NoArgsConstructor
 @AllArgsConstructor
-public class Jugador {
+public class Socio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +34,11 @@ public class Jugador {
     @Column(nullable = false, unique = true)
     private String dni;
 
+    @NotBlank(message = "La dirección no puede estar vacía.")
+    @Size(max = 255, message = "La dirección no puede tener más de 255 caracteres.")
+    @Column(nullable = false)
+    private String direccion;
+
     @NotBlank(message = "El teléfono no puede estar vacío.")
     @Column(nullable = false)
     private String telefono;
@@ -52,36 +55,26 @@ public class Jugador {
     @Column(name = "fecha_baja")
     private LocalDate fechaBaja;
 
-    @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Pago> pagos;
-
-    @NotNull(message = "La categoría no puede ser nula.")
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", nullable = false)
-    private Categoria categoria;
-
-    // Nuevo campo: Estado
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoJugador estado;
+    private EstadoSocio estado;
 
-    // Constructor por defecto que establece el estado inicial como ACTIVO
-    public Jugador() {
-        this.estado = EstadoJugador.ACTIVO;
+    public enum EstadoSocio {
+        ACTIVO,
+        ANULADO
     }
 
-    // Métodos auxiliares
     public void anular() {
-        this.estado = EstadoJugador.ANULADO;
-        this.fechaBaja = LocalDate.now(); // Registrar la fecha de baja
+        this.estado = EstadoSocio.ANULADO;
+        this.fechaBaja = LocalDate.now();
     }
-    public void habilitar() {
-        this.estado = EstadoJugador.ACTIVO;
 
+    public void habilitar() {
+        this.estado = EstadoSocio.ACTIVO;
+        this.fechaBaja = null;
     }
 
     public boolean esActivo() {
-        return this.estado == EstadoJugador.ACTIVO;
+        return this.estado == EstadoSocio.ACTIVO;
     }
 }

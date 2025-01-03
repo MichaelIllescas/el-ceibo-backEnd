@@ -35,7 +35,7 @@ public class Pago {
     private String descripcion;
 
     @NotNull(message = "La cuota no puede ser nula.")
-    @ManyToOne(fetch = FetchType.LAZY  )
+    @ManyToOne
     @JoinColumn(name = "cuota_id", nullable = false)
     private Cuota cuota;
 
@@ -43,7 +43,7 @@ public class Pago {
     @JoinColumn(name = "jugador_id")
     private Jugador jugador;
 
-//    @ManyToOne
-//    @JoinColumn(name = "socio_id")
-//    private Socio socio;
+   @ManyToOne
+   @JoinColumn(name = "socio_id")
+   private Socio socio;
 }
