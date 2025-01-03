@@ -19,7 +19,7 @@ public class Cuota {
 
     @NotBlank(message = "El tipo de cuota es obligatorio")
     @Size(max = 50, message = "El tipo de cuota no puede tener más de 50 caracteres")
-    private String tipo;
+        private String tipo;
 
     @NotNull(message = "El monto no puede ser nulo")
     @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor a 0")

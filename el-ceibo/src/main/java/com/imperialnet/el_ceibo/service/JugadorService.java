@@ -57,8 +57,6 @@ public class JugadorService {
                 .collect(Collectors.toList());
     }
 
-
-
     public Jugador actualizarJugador(Long id, Jugador jugadorActualizado) {
         if (!jugadorRepository.existsById(id)) {
             throw new JugadorNotFoundException("El jugador con ID " + id + " no existe.");
