@@ -20,9 +20,16 @@ public class Pago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Temporal(TemporalType.DATE)
     @NotNull(message = "La fecha de pago no puede ser nula.")
     @Column(name = "fecha_pago", nullable = false)
     private LocalDate fechaPago;
+
+    @Temporal(TemporalType.DATE)
+    @NotNull(message = "La fecha de registro no puede ser nula.")
+    @Column(name = "fecha_registro", nullable = false)
+    private LocalDate fechaRegistro;
+
 
     @NotNull(message = "El monto no puede ser nulo.")
     @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor que 0.")
@@ -40,10 +47,10 @@ public class Pago {
     private Cuota cuota;
 
     @ManyToOne
-    @JoinColumn(name = "jugador_id")
+    @JoinColumn(name = "jugador_id", nullable = true)
     private Jugador jugador;
 
    @ManyToOne
-   @JoinColumn(name = "socio_id")
+   @JoinColumn(name = "socio_id", nullable = true)
    private Socio socio;
 }

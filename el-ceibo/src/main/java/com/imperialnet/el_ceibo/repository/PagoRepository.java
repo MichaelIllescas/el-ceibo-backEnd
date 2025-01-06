@@ -21,5 +21,9 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
     List<Pago> findByCuotaId(Long cuotaId);
 
     // Buscar pagos entre fechas específicas
-    List<Pago> findByFechaPagoBetween(LocalDate inicio, LocalDate fin);
+    List<Pago> findByFechaPagoBetweenAndSocioIsNull(LocalDate inicio, LocalDate fin);
+
+    List<Pago> findBySocioId(Long id);
+
+    List<Pago> findByFechaPagoBetween(LocalDate fechaInicio, LocalDate fechaFin);
 }

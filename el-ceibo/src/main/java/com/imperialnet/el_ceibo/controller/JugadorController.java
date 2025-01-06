@@ -49,6 +49,15 @@ public class JugadorController {
         return ResponseEntity.ok(jugadores);
     }
 
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<List<?>> obtenerJugadoresPorCategoria(
+            @PathVariable Long categoriaId
+    ) {
+        List<JugadorDTO> jugadores = jugadorService.findByCategoriaId(categoriaId);
+        return ResponseEntity.ok(jugadores);
+    }
+
+
     // Actualizar un jugador
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarJugador(@PathVariable Long id, @RequestBody JugadorDTO jugadorDTO) {

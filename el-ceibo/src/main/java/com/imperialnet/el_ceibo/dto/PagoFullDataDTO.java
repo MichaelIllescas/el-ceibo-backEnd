@@ -3,6 +3,8 @@ package com.imperialnet.el_ceibo.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class PagoFullDataDTO {
@@ -11,16 +13,14 @@ public class PagoFullDataDTO {
     private String nombre;
     private String apellido;
     private String dni;
-    private String categoria;
+    private String categoria; // Puede ser null si el pago no está relacionado con un jugador
     private String fechaPago;
-    private Double monto;
+    private BigDecimal monto;
     private String descripcion;
-    private String tipoCuota;
+    private String tipo; // "jugador" o "socio"
 
-
-
-    // Constructor
-    public PagoFullDataDTO(Long id,  String nombre, String apellido, String dni, String categoria, String fechaPago, Double monto, String descripcion, String tipoCuota) {
+    // Constructor completo
+    public PagoFullDataDTO(Long id, String nombre, String apellido, String dni, String categoria, String fechaPago, BigDecimal monto, String descripcion, String tipo) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -29,8 +29,9 @@ public class PagoFullDataDTO {
         this.fechaPago = fechaPago;
         this.monto = monto;
         this.descripcion = descripcion;
-        this.tipoCuota = tipoCuota;
-
+        this.tipo = tipo;
     }
 
+    // Constructor vacío
+    public PagoFullDataDTO() {}
 }

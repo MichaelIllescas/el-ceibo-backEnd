@@ -1,6 +1,6 @@
 package com.imperialnet.el_ceibo.controller;
 
-
+import com.imperialnet.el_ceibo.dto.JugadorPagoDTO;
 import com.imperialnet.el_ceibo.dto.PagoDTO;
 import com.imperialnet.el_ceibo.dto.PagoFullDataDTO;
 import com.imperialnet.el_ceibo.entity.Pago;
@@ -23,21 +23,33 @@ public class PagoController {
         this.pagoService = pagoService;
     }
 
-    // Registrar o actualizar un pago
-     @PostMapping
-    public ResponseEntity<PagoDTO> registrarPago(@RequestBody Pago pago) {
-        Pago nuevoPago = pagoService.guardarPago(pago);
-        PagoDTO pagoDTO = pagoService.convertirAPagoDTO(nuevoPago);
-        return ResponseEntity.ok(pagoDTO);
+    @PostMapping
+    public ResponseEntity<?> registrarPago(@RequestBody Pago pago) {
+        try {
+            Pago nuevoPago = pagoService.guardarPago(pago);
+            return ResponseEntity.ok(nuevoPago);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage()); // Devuelve un 400 si algo falla
+        }
     }
 
-    // Obtener todos los pagos
-    @GetMapping
-    public ResponseEntity<List<PagoDTO>> listarPagos() {
-        List<PagoDTO> pagosDTO = pagoService.obtenerTodosLosPagos(); // Llama al método correcto
-        return ResponseEntity.ok(pagosDTO);
-    }
 
+
+//    // Obtener todos los pagos
+//    @GetMapping
+//    public ResponseEntity<List<PagoDTO>> listarPagos() {
+//        return ResponseEntity.ok(pagoService.obtenerTodosLosPagos());
+//    }
+@GetMapping("/estado-pagos") // Endpoint específico
+public ResponseEntity<List<JugadorPagoDTO>> obtenerEstadoPagos(
+        @RequestParam Long categoriaId,
+        @RequestParam Integer mes,
+        @RequestParam Integer año
+) {
+    List<JugadorPagoDTO> jugadoresYPagos = pagoService.obtenerJugadoresYPagos(categoriaId, mes, año);
+    return ResponseEntity.ok(jugadoresYPagos);
+}
 
     // Obtener pagos por jugador
     @GetMapping("/jugador/{jugadorId}")
@@ -45,15 +57,15 @@ public class PagoController {
         return ResponseEntity.ok(pagoService.obtenerPagosPorJugador(jugadorId));
     }
 
-//    // Obtener pagos por socio
-//    @GetMapping("/socio/{socioId}")
-//    public ResponseEntity<List<Pago>> listarPagosPorSocio(@PathVariable Long socioId) {
-//        return ResponseEntity.ok(pagoService.obtenerPagosPorSocio(socioId));
-//    }
+    // Obtener pagos por socio
+    @GetMapping("/socio/{socioId}")
+    public ResponseEntity<List<PagoFullDataDTO>> listarPagosPorSocio(@PathVariable Long socioId) {
+        return ResponseEntity.ok(pagoService.obtenerPagosPorSocio(socioId));
+    }
 
     // Obtener pagos entre fechas
     @GetMapping("/fechas")
-    public ResponseEntity<List<Pago>> listarPagosPorFechas(
+    public ResponseEntity<List<PagoDTO>> listarPagosPorFechas(
             @RequestParam LocalDate inicio,
             @RequestParam LocalDate fin) {
         return ResponseEntity.ok(pagoService.obtenerPagosPorFechas(inicio, fin));
@@ -66,13 +78,25 @@ public class PagoController {
         return ResponseEntity.noContent().build();
     }
 
-    //Obtener listado total de  Socios y jugadores
-        @GetMapping("/listadoGeneral")
-    public ResponseEntity<?> listadoGeneral() {
-        return  ResponseEntity.ok(pagoService.getListadoGeneralSociosYJugadores());
+    // Obtener listado total de socios y jugadores
+    @GetMapping("/listadoGeneral")
+    public ResponseEntity<List<?>> listadoGeneral() {
+        return ResponseEntity.ok(pagoService.getListadoGeneralSociosYJugadores());
     }
-    @GetMapping("/ListadoGeneralPagos")
-    public ResponseEntity<?> listadoGeneralPagos() {
-        return ResponseEntity.ok(pagoService.getListagoGenerlPagos());
+
+    // Obtener listado general de pagos
+    @GetMapping("/listadoGeneralPagos")
+    public ResponseEntity<List<PagoFullDataDTO>> listadoGeneralPagos() {
+        return ResponseEntity.ok(pagoService.getListadoGeneralPagos());
     }
+    @GetMapping("/por-periodo")
+    public ResponseEntity<List<PagoFullDataDTO>> obtenerPagosPorPeriodo(
+            @RequestParam(required = false) Integer dia,
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer año
+    ) {
+        List<PagoFullDataDTO> pagos = pagoService.filtrarPagosPorFecha(dia, mes, año);
+        return ResponseEntity.ok(pagos);
+    }
+
 }

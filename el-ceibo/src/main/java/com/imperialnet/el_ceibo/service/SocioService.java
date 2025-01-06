@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class SocioService {
     }
 
     // Actualizar un socio existente
-    public SocioDTO     actualizarSocio(Long id, SocioDTO socioDTO) {
+    public SocioDTO actualizarSocio(Long id, SocioDTO socioDTO) {
         Socio socioExistente = socioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Socio no encontrado con el ID: " + id));
 
@@ -100,7 +101,9 @@ public class SocioService {
                 socioDTO.getEmail(),
                 socioDTO.getFechaRegistro() != null ? LocalDate.parse(socioDTO.getFechaRegistro()) : null,
                 null, // Fecha de baja se gestiona en el método correspondiente
-                Socio.EstadoSocio.valueOf(socioDTO.getEstado())
+                Socio.EstadoSocio.valueOf(socioDTO.getEstado()),
+                new ArrayList<>() // Inicializamos la lista de pagos como una lista vacía
         );
     }
+
 }

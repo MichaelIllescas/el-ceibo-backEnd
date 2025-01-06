@@ -93,6 +93,19 @@ public class JugadorService {
                 jugador.getEstado().name() // Convertir enum EstadoJugador a String
         );
     }
+    private JugadorDTO convertirJugadorAJugadorDTO(Jugador jugador) {
+        return new JugadorDTO(
+                jugador.getId(),
+                jugador.getNombre(),
+                jugador.getApellido(),
+                jugador.getDni(),
+                jugador.getTelefono(),
+                jugador.getEmail(),
+                jugador.getFechaRegistro().toString(),
+                jugador.getCategoria().getNombre(),
+                jugador.getEstado().name()
+        );
+    }
 
     public List<Jugador> obtenerJugadoresActivos() {
         return jugadorRepository.findByEstado(EstadoJugador.ACTIVO);
@@ -112,4 +125,9 @@ public class JugadorService {
         jugadorRepository.save(jugador);
     }
 
+    public List<JugadorDTO> findByCategoriaId(Long categoriaId) {
+         return jugadorRepository.findByCategoriaId( categoriaId).stream()
+                 .map(this :: convertirJugadorAJugadorDTO ).
+                 collect(Collectors.toList());
+    }
 }

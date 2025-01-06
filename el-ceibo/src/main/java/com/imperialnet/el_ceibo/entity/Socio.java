@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "socios")
@@ -58,6 +59,9 @@ public class Socio {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoSocio estado;
+
+    @OneToMany(mappedBy = "socio", cascade = CascadeType.ALL)
+    private List<Pago> pagos;
 
     public enum EstadoSocio {
         ACTIVO,
