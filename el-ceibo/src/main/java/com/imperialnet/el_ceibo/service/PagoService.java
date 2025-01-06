@@ -1,9 +1,6 @@
 package com.imperialnet.el_ceibo.service;
 
-import com.imperialnet.el_ceibo.dto.JugadorPagoDTO;
-import com.imperialnet.el_ceibo.dto.PagoDTO;
-import com.imperialnet.el_ceibo.dto.PagoFullDataDTO;
-import com.imperialnet.el_ceibo.dto.PersonaDTO;
+import com.imperialnet.el_ceibo.dto.*;
 import com.imperialnet.el_ceibo.entity.*;
 import com.imperialnet.el_ceibo.repository.CuotaRepository;
 import com.imperialnet.el_ceibo.repository.JugadorRepository;
@@ -207,6 +204,62 @@ public class PagoService {
 
         return pagoRepository.findAll().stream().map(this::convertirAPagoFullDataDTO).collect(Collectors.toList());
 
+    }
+
+    public List<BigDecimal> obtenerRecaudacionesPorAnio(int anio) {
+        List<RecaudacionMensualDTO> resultados = pagoRepository.calcularRecaudacionesPorAnio(anio);
+
+        // Crear un arreglo para los 12 meses
+        List<BigDecimal> recaudaciones = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            recaudaciones.add(BigDecimal.ZERO);
+        }
+
+        // Mapear los resultados al mes correspondiente
+        for (RecaudacionMensualDTO resultado : resultados) {
+            recaudaciones.set(resultado.getMes() - 1, resultado.getMonto());
+        }
+
+        return recaudaciones;
+    }
+
+    public List<BigDecimal> obtenerRecaudacionesMensuales(int anio) {
+        // Inicializar la lista de 12 meses con valores en 0.0
+        List<BigDecimal> recaudacionesMensuales = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            recaudacionesMensuales.add(BigDecimal.ZERO);
+        }
+
+        // Obtener las recaudaciones desde el repositorio
+        List<RecaudacionMensualDTO> resultados = pagoRepository.calcularRecaudacionesPorAnio(anio);
+
+        // Mapear resultados del DTO al índice correspondiente (meses 1-12 -> índice 0-11)
+        for (RecaudacionMensualDTO resultado : resultados) {
+            int mes = resultado.getMes(); // Obtener el mes del DTO
+            BigDecimal total = resultado.getMonto(); // Obtener el monto del DTO
+            recaudacionesMensuales.set(mes - 1, total); // Ajustar índice (0 = Enero, 1 = Febrero, ...)
+        }
+
+        return recaudacionesMensuales;
+    }
+
+
+    public List<RecaudacionTrimestralDTO> obtenerRecaudacionesTrimestrales(int anio) {
+        // Obtener las recaudaciones mensuales
+        List<BigDecimal> recaudacionesMensuales = obtenerRecaudacionesMensuales(anio);
+
+        // Crear los trimestres sumando los valores correspondientes
+        List<RecaudacionTrimestralDTO> recaudacionesTrimestrales = new ArrayList<>();
+        recaudacionesTrimestrales.add(new RecaudacionTrimestralDTO("Q1 (Ene-Mar)",
+                recaudacionesMensuales.subList(0, 3).stream().reduce(BigDecimal.ZERO, BigDecimal::add)));
+        recaudacionesTrimestrales.add(new RecaudacionTrimestralDTO("Q2 (Abr-Jun)",
+                recaudacionesMensuales.subList(3, 6).stream().reduce(BigDecimal.ZERO, BigDecimal::add)));
+        recaudacionesTrimestrales.add(new RecaudacionTrimestralDTO("Q3 (Jul-Sep)",
+                recaudacionesMensuales.subList(6, 9).stream().reduce(BigDecimal.ZERO, BigDecimal::add)));
+        recaudacionesTrimestrales.add(new RecaudacionTrimestralDTO("Q4 (Oct-Dic)",
+                recaudacionesMensuales.subList(9, 12).stream().reduce(BigDecimal.ZERO, BigDecimal::add)));
+
+        return recaudacionesTrimestrales;
     }
 
 }
