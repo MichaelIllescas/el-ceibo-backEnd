@@ -129,10 +129,10 @@ public class PagoService {
     // Obtener listado general de socios y jugadores
     public List<PersonaDTO> getListadoGeneralSociosYJugadores() {
         List<PersonaDTO> listadoGeneral = new ArrayList<>();
-        jugadorRepository.findAll().forEach(jugador -> listadoGeneral.add(
+        jugadorRepository.findByEstado(EstadoJugador.ACTIVO).forEach(jugador -> listadoGeneral.add(
                 new PersonaDTO(jugador.getId(), jugador.getNombre(), jugador.getApellido(), jugador.getDni(), "jugador")
         ));
-        socioRepository.findAll().forEach(socio -> listadoGeneral.add(
+        socioRepository.findAllByEstado(Socio.EstadoSocio.ACTIVO).forEach(socio -> listadoGeneral.add(
                 new PersonaDTO(socio.getId(), socio.getNombre(), socio.getApellido(), socio.getDni(), "socio")
         ));
         return listadoGeneral;

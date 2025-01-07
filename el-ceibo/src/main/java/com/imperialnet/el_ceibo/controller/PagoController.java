@@ -36,11 +36,6 @@ public class PagoController {
 
 
 
-//    // Obtener todos los pagos
-//    @GetMapping
-//    public ResponseEntity<List<PagoDTO>> listarPagos() {
-//        return ResponseEntity.ok(pagoService.obtenerTodosLosPagos());
-//    }
 @GetMapping("/estado-pagos") // Endpoint específico
 public ResponseEntity<List<JugadorPagoDTO>> obtenerEstadoPagos(
         @RequestParam Long categoriaId,

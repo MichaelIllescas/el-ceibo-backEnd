@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SocioRepository extends JpaRepository<Socio, Long> {
 
+    public List<Socio> findAllByEstado(Socio.EstadoSocio estado);
 }
