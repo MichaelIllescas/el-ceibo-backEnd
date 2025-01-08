@@ -47,6 +47,7 @@ public class AuthenticationController {
                 .secure(false)   // Solo en HTTPS (activa si estás usando HTTPS)
                 .path("/")       // Disponible en toda la aplicación
                 .sameSite("Lax") // Política SameSite para evitar CSRF
+                .maxAge(3600)
                 .build();
 
         // Agregar la cookie a la respuesta HTTP
