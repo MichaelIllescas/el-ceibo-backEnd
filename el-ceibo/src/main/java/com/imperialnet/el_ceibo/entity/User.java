@@ -27,9 +27,6 @@ public class User implements UserDetails
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-
     @NotBlank(message = "El nombre no puede estar vacío.")
     @Column(nullable = false)
     private String firstName;
@@ -39,7 +36,7 @@ public class User implements UserDetails
     private String lastName;
 
     @NotBlank(message = "El dni no puede estar vacío.")
-    @Pattern(regexp = "\\d{7,8}", message = "El DNI debe tener entre 7 y 8 dígitos.")
+    @Pattern(regexp = "\\d{7,10}", message = "El DNI debe tener entre 7 y 10 dígitos.")
     @Column(nullable = false)
     private String dni;
 
@@ -50,7 +47,6 @@ public class User implements UserDetails
     @NotBlank(message = "La dirección no puede estar vacía.")
     @Column(nullable = false)
     private String direccion;
-
 
     @NotBlank(message = "El email no puede estar vacío.")
     @Email(message = "El email debe ser válido.")
@@ -97,6 +93,6 @@ public class User implements UserDetails
     }
     @Override
     public boolean isEnabled(){
-        return true;
+        return this.enabled;
     }
 }

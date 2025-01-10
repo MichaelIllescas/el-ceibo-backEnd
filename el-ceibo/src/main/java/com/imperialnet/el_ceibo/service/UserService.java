@@ -1,5 +1,6 @@
 package com.imperialnet.el_ceibo.service;
 
+import com.imperialnet.el_ceibo.dto.EstadoUsuarioDTO;
 import com.imperialnet.el_ceibo.dto.UserDTO;
 import com.imperialnet.el_ceibo.entity.Role;
 import com.imperialnet.el_ceibo.repository.UserRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.imperialnet.el_ceibo.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,5 +96,36 @@ public class UserService {
                 .role(userDTO.getRol().equals(Role.ADMIN.toString())?Role.ADMIN:Role.USER)
                 .build();
     }
+
+    public void anularUsuario(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        user.get().setEnabled(false);
+        userRepository.save(user.get());
+    }
+
+    public void habilitarUsuario(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        user.get().setEnabled(true);
+        userRepository.save(user.get());
+    }
+
+    public List<EstadoUsuarioDTO> getEstadosSocios() {
+        return userRepository.findAll()
+                .stream().map(this::toEstadoUsuarioDTO)
+                .collect(Collectors.toList());
+    }
+
+    public EstadoUsuarioDTO toEstadoUsuarioDTO(User user){
+        return EstadoUsuarioDTO.builder()
+                .id(user.getId())
+                .nombre(user.getFirstName())
+                .apellido(user.getLastName())
+                .dni(user.getDni())
+                .email(user.getEmail())
+                .estado(user.isEnabled()?"ACTIVO":"INACTIVO")
+                .build();
+    }
+
+
 
 }
