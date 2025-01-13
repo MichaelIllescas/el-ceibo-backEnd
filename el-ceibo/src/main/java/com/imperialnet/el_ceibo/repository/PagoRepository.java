@@ -36,5 +36,8 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
             "ORDER BY MONTH(p.fechaPago)")
     List<RecaudacionMensualDTO> calcularRecaudacionesPorAnio(int anio);
 
+    @Query("SELECT SUM(p.monto) FROM Pago p")
+    double sumRecaudacionTotal();
+
 
 }

@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
+public class   JwtCookieAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
@@ -62,7 +62,7 @@ public class JwtCookieAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private String extractTokenFromCookies(HttpServletRequest request) {
+    public String extractTokenFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

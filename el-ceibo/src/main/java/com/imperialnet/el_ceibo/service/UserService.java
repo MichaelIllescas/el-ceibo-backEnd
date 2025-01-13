@@ -1,10 +1,14 @@
 package com.imperialnet.el_ceibo.service;
 
+import com.imperialnet.el_ceibo.configuration.JwtCookieAuthenticationFilter;
+import com.imperialnet.el_ceibo.configuration.JwtService;
 import com.imperialnet.el_ceibo.dto.EstadoUsuarioDTO;
 import com.imperialnet.el_ceibo.dto.UserDTO;
 import com.imperialnet.el_ceibo.entity.Role;
 import com.imperialnet.el_ceibo.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.imperialnet.el_ceibo.entity.User;
 
@@ -16,8 +20,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    public final UserRepository userRepository;
-
+    private final UserRepository userRepository;
+    private final JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     // Crear un nuevo usuario
     public UserDTO createUser(UserDTO userDTO) {
@@ -68,7 +74,7 @@ public class UserService {
     }
 
     // Conversión de entidad a DTO
-    private UserDTO toDTO(User user) {
+    public UserDTO toDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .nombre(user.getFirstName())
@@ -127,5 +133,34 @@ public class UserService {
     }
 
 
+    public UserDTO getPerfil(HttpServletRequest request) {
+        String token = jwtCookieAuthenticationFilter.extractTokenFromCookies(request);
+        String username= jwtService.extractUserName(token);
+        User user= userRepository.findByEmail(username).get();
+        UserDTO userDTO= toDTO(user);
+        return userDTO;
+    }
 
+
+
+
+    public boolean updatePassword(HttpServletRequest request, String currentPassword, String newPassword) {
+        String token = jwtCookieAuthenticationFilter.extractTokenFromCookies(request);
+        String username= jwtService.extractUserName(token);
+        User user= userRepository.findByEmail(username).get();
+
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado.");
+        }
+
+        // Verificar si la contraseña actual coincide
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return false; // La contraseña actual es incorrecta
+        }
+
+        // Actualizar la contraseña en la base de datos
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
+    }
 }

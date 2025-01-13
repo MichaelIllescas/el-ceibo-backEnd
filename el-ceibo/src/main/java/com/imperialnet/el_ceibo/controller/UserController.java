@@ -1,15 +1,19 @@
 package com.imperialnet.el_ceibo.controller;
 
 import com.imperialnet.el_ceibo.dto.EstadoUsuarioDTO;
+import com.imperialnet.el_ceibo.dto.UpdatePasswordRequestDTO;
 import com.imperialnet.el_ceibo.dto.UserDTO;
 import com.imperialnet.el_ceibo.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,9 +68,9 @@ public class UserController {
             }
         }
 
-        // Habilitar un socio
+        // Habilitar un usuario
         @PutMapping("/{id}/habilitar")
-        public ResponseEntity<Void> habilitarSocio(@PathVariable Long id) {
+        public ResponseEntity<Void> habilitarUsuario(@PathVariable Long id) {
             try {
                 userService.habilitarUsuario(id);
                 return ResponseEntity.noContent().build();
@@ -75,11 +79,42 @@ public class UserController {
             }
         }
 
-    // Obtener todos los usuarios
-    @GetMapping("/estados-usuarios")
-    public ResponseEntity<List<EstadoUsuarioDTO>> obtenerEstadosDeUsuarios(){
-            return ResponseEntity.ok(userService.getEstadosSocios());
-    }
+        // Obtener todos los usuarios
+        @GetMapping("/estados-usuarios")
+        public ResponseEntity<List<EstadoUsuarioDTO>> obtenerEstadosDeUsuarios(){
+                return ResponseEntity.ok(userService.getEstadosSocios());
+        }
+
+        @GetMapping("/perfil")
+        public ResponseEntity<UserDTO> getDatosPerfil( HttpServletRequest request){
+            return ResponseEntity.ok(userService.getPerfil(request));
+        }
+        @PutMapping("/update-password")
+        public ResponseEntity<Map<String, String>> updatePassword(
+                @RequestBody UpdatePasswordRequestDTO updatePasswordRequestDTO,
+                HttpServletRequest request
+        ) {
+            boolean isUpdated = userService.updatePassword(
+                    request,
+                    updatePasswordRequestDTO.getCurrentPassword(),
+                    updatePasswordRequestDTO.getNewPassword()
+            );
+
+            if (isUpdated) {
+                // Mensaje de éxito
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Contraseña actualizada correctamente.");
+                return ResponseEntity.ok(response);
+            } else {
+                // Mensaje de error
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "La contraseña actual es incorrecta.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        }
+
+
+
 }
 
 
