@@ -163,4 +163,21 @@ public class UserService {
         userRepository.save(user);
         return true;
     }
+    // Restablecer la contraseña
+    public void resetearClave(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtener el DNI del usuario
+        String dni = user.getDni();
+
+        // Encriptar la nueva contraseña usando el DNI
+        String claveEncriptada = passwordEncoder.encode(dni);
+
+        // Establecer la nueva contraseña encriptada
+        user.setPassword(claveEncriptada);
+
+        // Guardar el usuario con la nueva contraseña
+        userRepository.save(user);
+    }
 }

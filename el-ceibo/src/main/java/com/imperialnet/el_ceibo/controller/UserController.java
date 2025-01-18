@@ -89,6 +89,7 @@ public class UserController {
         public ResponseEntity<UserDTO> getDatosPerfil( HttpServletRequest request){
             return ResponseEntity.ok(userService.getPerfil(request));
         }
+
         @PutMapping("/update-password")
         public ResponseEntity<Map<String, String>> updatePassword(
                 @RequestBody UpdatePasswordRequestDTO updatePasswordRequestDTO,
@@ -113,6 +114,16 @@ public class UserController {
             }
         }
 
+        // Endpoint para resetear la contraseña
+        @PostMapping("/resetearClave/{id}")
+        public ResponseEntity<String> resetearClave(@PathVariable Long id) {
+            try {
+                userService.resetearClave(id);
+                return ResponseEntity.ok("Contraseña reseteada exitosamente.");
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            }
+        }
 
 
 }
