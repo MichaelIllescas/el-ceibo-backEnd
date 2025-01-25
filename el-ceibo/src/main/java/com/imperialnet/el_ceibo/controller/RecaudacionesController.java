@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recaudaciones")
-@CrossOrigin(origins = "http://localhost:3000")
 public class RecaudacionesController {
 
     @Autowired
