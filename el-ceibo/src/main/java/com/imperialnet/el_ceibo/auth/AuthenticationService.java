@@ -3,6 +3,7 @@ package com.imperialnet.el_ceibo.auth;
 import com.imperialnet.el_ceibo.configuration.JwtService;
 import com.imperialnet.el_ceibo.entity.Role;
 import com.imperialnet.el_ceibo.entity.User;
+import com.imperialnet.el_ceibo.exception.DisabledUserException;
 import com.imperialnet.el_ceibo.exception.InvalidCredentialsException;
 import com.imperialnet.el_ceibo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,15 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
+        // Buscar al usuario en la base de datos
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Usuario no encontrado."));
+
+        // Verificar si el usuario está deshabilitado
+        if (!user.isEnabled()) {
+            throw new DisabledUserException("El usuario está deshabilitado.");
+        }
+
         try {
             // Verificar las credenciales del usuario
             authenticationManager.authenticate(
@@ -53,13 +63,8 @@ public class AuthenticationService {
                     )
             );
         } catch (Exception e) {
-            // Lanzar una excepción si las credenciales son inválidas
             throw new InvalidCredentialsException("Usuario o contraseña incorrectos.");
         }
-
-        // Buscar al usuario en la base de datos
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("Usuario no encontrado."));
 
         // Generar el token JWT
         Map<String, Object> claims = new HashMap<>();

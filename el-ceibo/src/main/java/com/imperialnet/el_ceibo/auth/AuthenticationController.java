@@ -2,11 +2,13 @@ package com.imperialnet.el_ceibo.auth;
 
 import com.imperialnet.el_ceibo.dto.UserDTO;
 import com.imperialnet.el_ceibo.entity.Role;
+import com.imperialnet.el_ceibo.exception.DisabledUserException;
 import com.imperialnet.el_ceibo.exception.InvalidCredentialsException;
 import com.imperialnet.el_ceibo.service.CookieService;
 import com.imperialnet.el_ceibo.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +55,10 @@ public class AuthenticationController {
         } catch (InvalidCredentialsException e) {
             // Manejar credenciales inválidas
             return ResponseEntity.status(401).body(e.getMessage());
-        } catch (Exception e) {
+        } catch (DisabledUserException e) {
+            // Manejar usuario deshabilitado con código 403
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }catch (Exception e) {
             // Manejar errores inesperados
             return ResponseEntity.status(500).body("Error al conectarse al servidor. Intente más tarde.");
         }
@@ -63,7 +68,7 @@ public class AuthenticationController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         // Crear una cookie con tiempo de vida de 0 para eliminarla
         ResponseCookie cookie = ResponseCookie.from("authToken", "")
-                .httpOnly(true)
+                .httpOnly(false)
                 .secure(false)
                 .path("/")
                 .maxAge(0) // Expira inmediatamente

@@ -132,7 +132,6 @@ public class UserService {
                 .build();
     }
 
-
     public UserDTO getPerfil(HttpServletRequest request) {
         String token = jwtCookieAuthenticationFilter.extractTokenFromCookies(request);
         String username= jwtService.extractUserName(token);
@@ -140,9 +139,6 @@ public class UserService {
         UserDTO userDTO= toDTO(user);
         return userDTO;
     }
-
-
-
 
     public boolean updatePassword(HttpServletRequest request, String currentPassword, String newPassword) {
         String token = jwtCookieAuthenticationFilter.extractTokenFromCookies(request);
@@ -163,6 +159,7 @@ public class UserService {
         userRepository.save(user);
         return true;
     }
+
     // Restablecer la contraseña
     public void resetearClave(Long userId) {
         User user = userRepository.findById(userId)
@@ -180,4 +177,24 @@ public class UserService {
         // Guardar el usuario con la nueva contraseña
         userRepository.save(user);
     }
+
+    public void insertAdminUser(){
+                Optional<User>user= userRepository.findByEmail("info@imperial-net.com");
+        if (user.isEmpty()){
+           User admin= User.builder()
+                   .firstName("Jonathan y Jose")
+                   .lastName("Imperial-net")
+                   .dni("37757084")
+                   .telefono("2923530179")
+                   .direccion("9 de julio 1031, Trenque Lauquen")
+                   .email("info@imperial-net.com")
+                   .password(passwordEncoder.encode("admin"))
+                   .role(Role.ADMIN)
+                   .enabled(true)
+                   .build();
+            userRepository.save(admin);
+        }
+
+    }
+
 }
