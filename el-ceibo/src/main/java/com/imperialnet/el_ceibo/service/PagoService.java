@@ -6,6 +6,7 @@ import com.imperialnet.el_ceibo.repository.CuotaRepository;
 import com.imperialnet.el_ceibo.repository.JugadorRepository;
 import com.imperialnet.el_ceibo.repository.PagoRepository;
 import com.imperialnet.el_ceibo.repository.SocioRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +25,18 @@ public class PagoService {
     private final SocioRepository socioRepository;
     private final JugadorRepository jugadorRepository;
     private final CuotaRepository cuotaRepository;
+    private final UserService userService;
 
     @Autowired
-    public PagoService(PagoRepository pagoRepository, SocioRepository socioRepository, JugadorRepository jugadorRepository, CuotaRepository cuotaRepository) {
+    public PagoService(PagoRepository pagoRepository, SocioRepository socioRepository, JugadorRepository jugadorRepository, CuotaRepository cuotaRepository, UserService userService) {
         this.pagoRepository = pagoRepository;
         this.socioRepository = socioRepository;
         this.jugadorRepository = jugadorRepository;
         this.cuotaRepository = cuotaRepository;
+        this.userService = userService;
     }
 
-    public Pago guardarPago(Pago pago) {
+    public Pago guardarPago(Pago pago, HttpServletRequest request) {
         // Verificar que la cuota no sea nula
         if (pago.getCuota() == null || pago.getCuota().getId() == null) {
             throw new IllegalArgumentException("La cuota no puede ser nula y debe contener un ID válido.");
@@ -58,7 +61,9 @@ public class PagoService {
             pago.setSocio(socio);
         }
 
-        pago.setFechaRegistro(LocalDate.now() );
+        pago.setFechaRegistro(LocalDate.now());
+        User usuarioActual = userService.obtenerUsuarioActual(request); // Método que obtiene el usuario autenticado
+        pago.setUsuario(usuarioActual);
         return pagoRepository.save(pago);
     }
 
@@ -78,7 +83,8 @@ public class PagoService {
                 pago.getDescripcion(),
                 pago.getCuota().getId(),
                 pago.getJugador() != null ? pago.getJugador().getId() : null,
-                pago.getSocio() != null ? pago.getSocio().getId() : null
+                pago.getSocio() != null ? pago.getSocio().getId() : null,
+                pago.getUsuario().getFirstName() + ' ' + pago.getUsuario().getLastName()
         );
     }
 
@@ -93,7 +99,8 @@ public class PagoService {
                 pago.getFechaPago().toString(),
                 pago.getMonto(),
                 pago.getDescripcion(),
-                pago.getCuota().getTipo()
+                pago.getCuota().getTipo(),
+                pago.getUsuario().getFirstName() + ' ' + pago.getUsuario().getLastName()
         );
     }
 
@@ -242,7 +249,6 @@ public class PagoService {
 
         return recaudacionesMensuales;
     }
-
 
     public List<RecaudacionTrimestralDTO> obtenerRecaudacionesTrimestrales(int anio) {
         // Obtener las recaudaciones mensuales

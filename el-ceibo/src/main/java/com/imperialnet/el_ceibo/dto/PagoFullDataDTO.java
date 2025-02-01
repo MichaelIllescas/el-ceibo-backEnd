@@ -18,9 +18,10 @@ public class PagoFullDataDTO {
     private BigDecimal monto;
     private String descripcion;
     private String tipo; // "jugador" o "socio"
+    private String usuario_registro;
 
     // Constructor completo
-    public PagoFullDataDTO(Long id, String nombre, String apellido, String dni, String categoria, String fechaPago, BigDecimal monto, String descripcion, String tipo) {
+    public PagoFullDataDTO(Long id, String nombre, String apellido, String dni, String categoria, String fechaPago, BigDecimal monto, String descripcion, String tipo, String usuario_registro) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -30,6 +31,7 @@ public class PagoFullDataDTO {
         this.monto = monto;
         this.descripcion = descripcion;
         this.tipo = tipo;
+        this.usuario_registro= usuario_registro;
     }
 
     // Constructor vacío

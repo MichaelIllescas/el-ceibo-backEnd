@@ -5,6 +5,7 @@ import com.imperialnet.el_ceibo.dto.PagoDTO;
 import com.imperialnet.el_ceibo.dto.PagoFullDataDTO;
 import com.imperialnet.el_ceibo.entity.Pago;
 import com.imperialnet.el_ceibo.service.PagoService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,9 @@ public class PagoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registrarPago(@RequestBody Pago pago) {
+    public ResponseEntity<?> registrarPago(@RequestBody Pago pago, HttpServletRequest request) {
         try {
-            Pago nuevoPago = pagoService.guardarPago(pago);
+            Pago nuevoPago = pagoService.guardarPago(pago, request);
             return ResponseEntity.ok(nuevoPago);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -34,17 +35,15 @@ public class PagoController {
         }
     }
 
-
-
-@GetMapping("/estado-pagos") // Endpoint específico
-public ResponseEntity<List<JugadorPagoDTO>> obtenerEstadoPagos(
-        @RequestParam Long categoriaId,
-        @RequestParam Integer mes,
-        @RequestParam Integer año
-) {
-    List<JugadorPagoDTO> jugadoresYPagos = pagoService.obtenerJugadoresYPagos(categoriaId, mes, año);
-    return ResponseEntity.ok(jugadoresYPagos);
-}
+    @GetMapping("/estado-pagos") // Endpoint específico
+    public ResponseEntity<List<JugadorPagoDTO>> obtenerEstadoPagos(
+            @RequestParam Long categoriaId,
+            @RequestParam Integer mes,
+            @RequestParam Integer año
+    ) {
+        List<JugadorPagoDTO> jugadoresYPagos = pagoService.obtenerJugadoresYPagos(categoriaId, mes, año);
+        return ResponseEntity.ok(jugadoresYPagos);
+    }
 
     // Obtener pagos por jugador
     @GetMapping("/jugador/{jugadorId}")

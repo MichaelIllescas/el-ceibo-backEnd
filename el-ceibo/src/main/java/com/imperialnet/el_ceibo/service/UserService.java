@@ -8,6 +8,8 @@ import com.imperialnet.el_ceibo.entity.Role;
 import com.imperialnet.el_ceibo.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.imperialnet.el_ceibo.entity.User;
@@ -24,6 +26,7 @@ public class UserService {
     private final JwtCookieAuthenticationFilter jwtCookieAuthenticationFilter;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository usuarioRepository;
 
     // Crear un nuevo usuario
     public UserDTO createUser(UserDTO userDTO) {
@@ -179,22 +182,28 @@ public class UserService {
     }
 
     public void insertAdminUser(){
-                Optional<User>user= userRepository.findByEmail("info@imperial-net.com");
-        if (user.isEmpty()){
-           User admin= User.builder()
-                   .firstName("Jonathan y Jose")
-                   .lastName("Imperial-net")
-                   .dni("37757084")
-                   .telefono("2923530179")
-                   .direccion("Trenque Lauquen")
-                   .email("admin@admin.com")
-                   .password(passwordEncoder.encode("admin"))
-                   .role(Role.ADMIN)
-                   .enabled(true)
-                   .build();
+        Optional<User> existingUser = userRepository.findByEmail("admin@admin.com");
+
+        if (existingUser.isEmpty()) { // Solo si no existe, lo creamos
+            User admin = User.builder()
+                    .firstName("Jonathan y Jose")
+                    .lastName("Imperial-net")
+                    .dni("37757084")
+                    .telefono("2923530179")
+                    .direccion("Trenque Lauquen")
+                    .email("admin@admin.com") // Usar el mismo email que estás buscando
+                    .password(passwordEncoder.encode("admin"))
+                    .role(Role.ADMIN)
+                    .enabled(true)
+                    .build();
             userRepository.save(admin);
         }
-
     }
 
+    public User obtenerUsuarioActual(HttpServletRequest request) {
+        String token = jwtCookieAuthenticationFilter.extractTokenFromCookies(request);
+        String username= jwtService.extractUserName(token);
+        User user= userRepository.findByEmail(username).get();
+        return user;
+    }
 }

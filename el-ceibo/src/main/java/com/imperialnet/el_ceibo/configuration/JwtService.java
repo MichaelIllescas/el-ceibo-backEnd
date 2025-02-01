@@ -64,7 +64,9 @@ public class JwtService {
                 .compact();
     }
 
-
+    public Long extractUserId(String jwt) {
+        return extractClaim(jwt, claims -> claims.get("userId", Long.class));
+    }
 
     public <T> T extractClaim (String jwt, Function <Claims, T> claimsTFunction){
         final Claims claims = extactAllCalims(jwt);
