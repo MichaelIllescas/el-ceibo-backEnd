@@ -11,7 +11,7 @@ public class CookieService {
                 .httpOnly(false)  // Permitir acceso desde el frontend
                 .secure(true)    // Cambiar a true si usas HTTPS
                 .path("/")        // Disponible en toda la aplicación
-                .domain("elceibo.imperial-net.com")  // Dominio para compartir la cookie entre subdominios
+                .domain("https://elceibo.imperial-net.com")  // Dominio para compartir la cookie entre subdominios
                 .sameSite("Lax")  // Política SameSite para evitar CSRF
                 .maxAge(3600)     // Duración de la cookie en segundos (1 hora)
                 .build();
