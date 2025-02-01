@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.imperialnet.el_ceibo.ElCeiboApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.30 s -- in com.imperialnet.el_ceibo.ElCeiboApplicationTests
