@@ -27,7 +27,7 @@
                     .cors(cors -> cors.configurationSource(request -> {
                         CorsConfiguration corsConfiguration = new CorsConfiguration();
                         corsConfiguration.setAllowedOrigins(Arrays.asList(
-                                "https://elceibo.imperial-net.com", "http://localhost:3000" // Aceptar solo solicitudes desde el frontend
+                                "https://elceibo.imperial-net.com", "http://localhost:3000", "http://localhost:3001" // Aceptar solo solicitudes desde el frontend
                         ));
                         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         corsConfiguration.addAllowedHeader("*"); // Permitir todos los encabezados
