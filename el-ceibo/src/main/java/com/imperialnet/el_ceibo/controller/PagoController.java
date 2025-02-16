@@ -27,7 +27,7 @@ public class PagoController {
     @PostMapping
     public ResponseEntity<?> registrarPago(@RequestBody Pago pago, HttpServletRequest request) {
         try {
-            Pago nuevoPago = pagoService.guardarPago(pago, request);
+            PagoFullDataDTO nuevoPago = pagoService.guardarPago(pago, request);
             return ResponseEntity.ok(nuevoPago);
         } catch (Exception e) {
             System.out.println(e.getMessage());

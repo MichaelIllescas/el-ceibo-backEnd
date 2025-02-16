@@ -36,7 +36,7 @@ public class PagoService {
         this.userService = userService;
     }
 
-    public Pago guardarPago(Pago pago, HttpServletRequest request) {
+    public PagoFullDataDTO guardarPago(Pago pago, HttpServletRequest request) {
         // Verificar que la cuota no sea nula
         if (pago.getCuota() == null || pago.getCuota().getId() == null) {
             throw new IllegalArgumentException("La cuota no puede ser nula y debe contener un ID válido.");
@@ -64,7 +64,10 @@ public class PagoService {
         pago.setFechaRegistro(LocalDate.now());
         User usuarioActual = userService.obtenerUsuarioActual(request); // Método que obtiene el usuario autenticado
         pago.setUsuario(usuarioActual);
-        return pagoRepository.save(pago);
+
+         pagoRepository.save(pago);
+         PagoFullDataDTO pagoFullDataDTO = this.convertirAPagoFullDataDTO(pago);
+         return  pagoFullDataDTO;
     }
 
     // Listar todos los pagos como DTOs
